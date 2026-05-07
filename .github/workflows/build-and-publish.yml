@@ -11,12 +11,11 @@ permissions:
 
 jobs:
   build-and-publish:
+    runs-on: ubuntu-latest
 
     env:
       DOCKER_PASS: ${{secrets.DOCKER_PASS}}
       DOCKER_USER: ${{secrets.DOCKER_USER}} 
-
-    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -30,7 +29,3 @@ jobs:
 
       - name: Build and publish
         run: ./build-and-publish.sh
-        with:
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
-
