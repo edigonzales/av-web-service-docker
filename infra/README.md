@@ -42,8 +42,9 @@ runcmd:
   # Optional, aber hilfreich: JAVA_HOME für den User setzen
   - [runuser, -l, avws, -c, "grep -q 'JAVA_HOME' ~/.bashrc || echo 'export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64' >> ~/.bashrc"]
 
-  # Repository klonen
+  # Repositories klonen
   - [runuser, -l, avws, -c, "git clone https://github.com/edigonzales/av-web-service-docker.git /home/avws/av-web-service-docker"]
+  - [runuser, -l, avws, -c, "git clone https://github.com/edigonzales/pdf4av.git /home/avws/pdf4av"]
 
   # Sanity checks im Cloud-Init-Log
   - [runuser, -l, avws, -c, "java -version"]
@@ -64,3 +65,8 @@ chmod 700 /etc/netplan/60-floating-ip.yaml
 sudo netplan apply
 ```
 
+Stack starten:
+
+```
+docker compose -f av-web-service-docker/infra/docker-compose.yml -p avws up
+```

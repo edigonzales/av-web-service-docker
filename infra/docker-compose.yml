@@ -3,7 +3,7 @@ services:
     image: postgis/postgis:17-3.5
     container_name: avws-db
     environment:
-      POSTGRES_DB: edit
+      POSTGRES_DB: avws
       POSTGRES_USER: avws
       POSTGRES_PASSWORD: secret
     ports:
