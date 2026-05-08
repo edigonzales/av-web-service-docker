@@ -9,7 +9,19 @@ services:
     ports:
       - "127.0.0.1:54321:5432"
     volumes:
-      - pgdata_avws:/var/lib/postgresql/data
+      - type: volume
+        source: pgdata_avws
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./docker-compose/initdb.sh
+        target: /docker-entrypoint-initdb.d/initdb.sh
+      - type: bind
+        source: ./docker-compose/initdb.sql
+        target: /docker-entrypoint-initdb.d/initdb.sql
+      - type: bind
+        source: ./docker-compose/postgresql-custom.conf
+        target: /opt/postgresql/conf.d/postgresql-custom.conf
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d avws"]
       interval: 10s
