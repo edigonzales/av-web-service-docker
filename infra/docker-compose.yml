@@ -1,0 +1,58 @@
+services:
+  avws-db:
+    image: postgis/postgis:17-3.5
+    container_name: avws-db
+    environment:
+      POSTGRES_DB: edit
+      POSTGRES_USER: avws
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "127.0.0.1:54321:5432"
+    volumes:
+      - pgdata_avws:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avws -d avws"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # av-web-service:
+  #   image: sogis/av-web-service:latest
+  #   container_name: av-web-service
+  #   depends_on:
+  #     avws-db:
+  #       condition: service_healthy
+  #   environment:
+  #     # ggf. an die effektiven Spring-Properties der App anpassen
+  #     DBURL: jdbc:postgresql://avws-db:5432/avws
+  #     DBUSR: avws
+  #     DBPWD: secret
+  #     DBSCHEMA: stage
+
+  #     # optional, falls die App ein Schema erwartet
+  #     # AVWS_DBSCHEMA: avtest
+  #     # JAVA_OPTS: "-Xmx1g"
+  #   ports:
+  #     # temporär exponiert
+  #     - "8080:8080"
+  #   restart: unless-stopped
+
+  # caddy:
+  #   image: caddy:2.8.4
+  #   container_name: avws-caddy
+  #   depends_on:
+  #     - av-web-service
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+  #     - caddy_data:/data
+  #     - caddy_config:/config
+  #   restart: unless-stopped
+
+volumes:
+  pgdata_avws:
+  # caddy_data:
+  # caddy_config:

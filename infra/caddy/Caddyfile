@@ -1,0 +1,17 @@
+localhost:80 {    
+
+    reverse_proxy av-web-service:8080
+
+    log stdout
+}
+
+avws.sogeo.services {    
+    tls stefan.ziegler.de@gmail.com 
+    #tls stefan.ziegler.de@gmail.com {
+    #    ca https://acme-staging-v02.api.letsencrypt.org/directory
+    #}
+
+    reverse_proxy av-web-service:8080
+
+    log stdout
+}
