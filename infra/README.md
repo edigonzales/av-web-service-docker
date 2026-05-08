@@ -68,7 +68,7 @@ sudo netplan apply
 Stack starten:
 
 ```
-docker compose -f av-web-service-docker/infra/docker-compose.yml -p avws up
+docker compose -f av-web-service-docker/infra/docker-compose.yml -p avws up (-d)
 ```
 
 Daten importieren:
@@ -82,7 +82,18 @@ jbang dev/import-data.java list
 ```
 
 ```
-jbang dev/import-data.java import dmav --db=avws --user=avws --password=secret
+jbang dev/import-data.java schema --db=avws --user=postgres --password=secret
 ```
+
+```
+jbang dev/import-data.java import dmav --db=avws --user=postgres --password=secret
+```
+
+...
+
+```
+nohup jbang dev/import-data.java import gebaddr --db=avws --user=postgres --password=secret > import-data.log 2>&1 &
+```
+
 
 etc.

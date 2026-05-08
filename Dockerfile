@@ -34,7 +34,7 @@ EXPOSE 8080
 
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -XX:+UseParallelGC -XX:MaxRAMPercentage=90.0 -jar /application/application.jar \
   \"--server.port=${SERVER_PORT:-8080}\" \
-  \"--server.tomcat.threads.max=${TOMCAT_THREADS_MAX:-200}\" \
+  \"--server.tomcat.threads.max=${TOMCAT_THREADS_MAX:-5}\" \
   \"--server.tomcat.accept-count=${TOMCAT_ACCEPT_COUNT:-100}\" \
   \"--server.tomcat.max-connections=${TOMCAT_MAX_CONNECTIONS:-10000}\" \
   \"--server.forward-headers-strategy=framework\" \
