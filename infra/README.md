@@ -70,3 +70,19 @@ Stack starten:
 ```
 docker compose -f av-web-service-docker/infra/docker-compose.yml -p avws up
 ```
+
+Daten importieren:
+
+```
+cd pdf4av
+```
+
+```
+jbang dev/import-data.java list
+```
+
+```
+jbang dev/import-data.java import dmav --db=avws --user=avws --password=secret
+```
+
+etc.

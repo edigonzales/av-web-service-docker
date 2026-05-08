@@ -1,17 +1,17 @@
 services:
   avws-db:
-    image: postgis/postgis:17-3.5
+    image: sogis/postgis:17-3.6
     container_name: avws-db
     environment:
       POSTGRES_DB: avws
-      POSTGRES_USER: avws
       POSTGRES_PASSWORD: secret
+      POSTGRES_INITDB_ARGS: "-c include_dir=/opt/postgresql/conf.d/"
     ports:
       - "127.0.0.1:54321:5432"
     volumes:
       - pgdata_avws:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U avws -d avws"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d avws"]
       interval: 10s
       timeout: 5s
       retries: 5
