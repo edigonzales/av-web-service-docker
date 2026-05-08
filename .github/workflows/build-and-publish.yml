@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOCKER_PASS: ${{secrets.DOCKER_PASS}}
-      DOCKER_USER: ${{secrets.DOCKER_USER}} 
+      DOCKER_PASSWORD: ${{secrets.DOCKER_PASS}}
+      DOCKER_USERNAME: ${{secrets.DOCKER_USER}} 
 
     steps:
       - name: Checkout
