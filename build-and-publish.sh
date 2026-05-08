@@ -73,17 +73,17 @@ docker build \
   -f "$DOCKERFILE" \
   .
 
-# if [[ -n "$DOCKER_USER" && -n "$DOCKER_PASS" ]]; then
-#   echo "Logging in to Docker Hub..."
-#   printf '%s' "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
-# else
-#   echo "No Docker credentials env vars found; assuming docker login already exists."
-# fi
+if [[ -n "$DOCKER_USER" && -n "$DOCKER_PASS" ]]; then
+  echo "Logging in to Docker Hub..."
+  printf '%s' "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
+else
+  echo "No Docker credentials env vars found; assuming docker login already exists."
+fi
 
-# echo "Pushing Docker image tags..."
-# docker push "${IMAGE_NAME}:${VERSION}"
-# docker push "${IMAGE_NAME}:latest"
+echo "Pushing Docker image tags..."
+docker push "${IMAGE_NAME}:${VERSION}"
+docker push "${IMAGE_NAME}:latest"
 
-# echo "Done:"
-# echo "  ${IMAGE_NAME}:${VERSION}"
-# echo "  ${IMAGE_NAME}:latest"
+echo "Done:"
+echo "  ${IMAGE_NAME}:${VERSION}"
+echo "  ${IMAGE_NAME}:latest"

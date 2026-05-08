@@ -37,6 +37,7 @@ ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -XX:+UseParallelGC -XX:MaxRAMPerce
   \"--server.tomcat.threads.max=${TOMCAT_THREADS_MAX:-200}\" \
   \"--server.tomcat.accept-count=${TOMCAT_ACCEPT_COUNT:-100}\" \
   \"--server.tomcat.max-connections=${TOMCAT_MAX_CONNECTIONS:-10000}\" \
+  \"--server.forward-headers-strategy=framework\" \
   \"--management.endpoint.health.probes.enabled=true\" \
   \"--management.health.livenessState.enabled=true\" \
   \"--management.health.readinessState.enabled=true\" \
