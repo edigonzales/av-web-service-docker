@@ -119,3 +119,12 @@ http://65.109.251.87:8080/logo/ch.SO
 http://65.109.251.87:8080/getegrid/?EGID=1319143 
 
 ```
+
+```
+https://avws.sogeo.services/logo/ch.SO
+```
+
+```
+https://avws.sogeo.services/getegrid/?EGID=1319143 
+
+```

@@ -40,6 +40,8 @@ services:
       DBUSR: postgres
       DBPWD: secret
       DBSCHEMA: stage
+      LOG_LEVEL_JDBC_TEMPLATE: INFO
+      LOG_LEVEL_AVWS: INFO
 
       # optional, falls die App ein Schema erwartet
       # AVWS_DBSCHEMA: avtest
