@@ -114,3 +114,8 @@ CREATE INDEX IF NOT EXISTS offclndss_address_bdg_egid_idx ON stage.offclndss_v2_
 ```
 http://65.109.251.87:8080/logo/ch.SO
 ```
+
+```
+http://65.109.251.87:8080/getegrid/?EGID=1319143 
+
+```
