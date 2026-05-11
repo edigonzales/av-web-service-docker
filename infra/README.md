@@ -25,6 +25,8 @@ packages:
   - curl
   - ca-certificates
   - openjdk-21-jdk
+  - postgresql 
+  - postgresql-contrib
 
 users:
   - name: avws
@@ -97,3 +99,13 @@ nohup jbang dev/import-data.java import gebaddr --db=avws --user=postgres --pass
 
 
 etc.
+
+Weil Index-Creation noch nicht in import-Script gewesen:
+
+```
+psql -h 127.0.0.1 -p 54321 -U postgres -d avws
+```
+
+```
+CREATE INDEX IF NOT EXISTS offclndss_address_bdg_egid_idx ON stage.offclndss_v2_2officlndxfddrsses_address (bdg_egid);
+```

@@ -29,26 +29,25 @@ services:
       retries: 5
     restart: unless-stopped
 
-  # av-web-service:
-  #   image: sogis/av-web-service:latest
-  #   container_name: av-web-service
-  #   depends_on:
-  #     avws-db:
-  #       condition: service_healthy
-  #   environment:
-  #     # ggf. an die effektiven Spring-Properties der App anpassen
-  #     DBURL: jdbc:postgresql://avws-db:5432/avws
-  #     DBUSR: avws
-  #     DBPWD: secret
-  #     DBSCHEMA: stage
+  av-web-service:
+    image: sogis/av-web-service:latest
+    container_name: av-web-service
+    depends_on:
+      avws-db:
+        condition: service_healthy
+    environment:
+      DBURL: jdbc:postgresql://avws-db:5432/avws
+      DBUSR: ddluser
+      DBPWD: ddluser
+      DBSCHEMA: stage
 
-  #     # optional, falls die App ein Schema erwartet
-  #     # AVWS_DBSCHEMA: avtest
-  #     # JAVA_OPTS: "-Xmx1g"
-  #   ports:
-  #     # temporär exponiert
-  #     - "8080:8080"
-  #   restart: unless-stopped
+      # optional, falls die App ein Schema erwartet
+      # AVWS_DBSCHEMA: avtest
+      # JAVA_OPTS: "-Xmx1g"
+    ports:
+      # temporär exponiert
+      - "8080:8080"
+    restart: unless-stopped
 
   # caddy:
   #   image: caddy:2.8.4
