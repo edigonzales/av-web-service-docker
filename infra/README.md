@@ -109,3 +109,8 @@ psql -h 127.0.0.1 -p 54321 -U postgres -d avws
 ```
 CREATE INDEX IF NOT EXISTS offclndss_address_bdg_egid_idx ON stage.offclndss_v2_2officlndxfddrsses_address (bdg_egid);
 ```
+
+
+```
+http://65.109.251.87:8080/logo/ch.SO
+```

@@ -37,8 +37,8 @@ services:
         condition: service_healthy
     environment:
       DBURL: jdbc:postgresql://avws-db:5432/avws
-      DBUSR: ddluser
-      DBPWD: ddluser
+      DBUSR: postgres
+      DBPWD: secret
       DBSCHEMA: stage
 
       # optional, falls die App ein Schema erwartet
