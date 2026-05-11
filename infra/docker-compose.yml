@@ -65,5 +65,5 @@ services:
 
 volumes:
   pgdata_avws:
-  # caddy_data:
-  # caddy_config:
+  caddy_data:
+  caddy_config:
