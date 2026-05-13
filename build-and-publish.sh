@@ -14,11 +14,13 @@ set -Eeuo pipefail
 #   UID_ARG=1001
 #   JAR_FILE=tmp/application.jar
 #   JBANG_EXPORT_MODE=fatjar     # fatjar | portable | local
+#   PDF4AV_REPO_URL=https://jars.interlis.guru/snapshots
 #   DOCKERHUB_PASSWORD=...       # alternative to DOCKERHUB_TOKEN
 
 IMAGE_NAME="${1:?Usage: $0 <docker-image-name> <version> [pdf4av-version]}"
 VERSION="${2:?Usage: $0 <docker-image-name> <version> [pdf4av-version]}"
 PDF4AV_VERSION="${3:-0.0.1-SNAPSHOT}"
+PDF4AV_REPO_URL="${PDF4AV_REPO_URL:-https://jars.interlis.guru/snapshots}"
 
 SCRIPT_FILE="${SCRIPT_FILE:-avws.java}"
 DOCKERFILE="${DOCKERFILE:-Dockerfile}"
@@ -58,6 +60,7 @@ echo "Exporting $SCRIPT_FILE via JBang Zero Install..."
 # fatjar passt zu einem Dockerfile, das genau ein JAR_FILE erwartet.
 curl -Ls https://sh.jbang.dev | bash -s - export "$JBANG_EXPORT_MODE" \
   --force \
+  --repos "$PDF4AV_REPO_URL" \
   --deps "ch.so.agi:pdf4av:${PDF4AV_VERSION}" \
   --output "$JAR_FILE" \
   "$SCRIPT_FILE"
