@@ -28,4 +28,4 @@ jobs:
           java-version: "21"
 
       - name: Build and publish
-        run: ./build-and-publish.sh sogis/av-web-service 0.0.${{ github.run_number }}
+        run: ./build-and-publish.sh sogis/av-web-service 0.0.${{ github.run_number }} 0.0.1-SNAPSHOT

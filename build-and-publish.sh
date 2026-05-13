@@ -2,10 +2,11 @@
 set -Eeuo pipefail
 
 # Usage:
-#   DOCKERHUB_USERNAME=... DOCKERHUB_TOKEN=... ./build-and-push.sh <docker-image-name> <version>
+#   DOCKERHUB_USERNAME=... DOCKERHUB_TOKEN=... ./build-and-publish.sh <docker-image-name> <version> [pdf4av-version]
 #
 # Example:
-#   DOCKERHUB_USERNAME=myuser DOCKERHUB_TOKEN=*** ./build-and-push.sh myuser/avws 1.0.0
+#   DOCKERHUB_USERNAME=myuser DOCKERHUB_TOKEN=*** ./build-and-publish.sh myuser/avws 1.0.0
+#   DOCKERHUB_USERNAME=myuser DOCKERHUB_TOKEN=*** ./build-and-publish.sh myuser/avws 1.0.0 0.0.2-SNAPSHOT
 #
 # Optional env vars:
 #   SCRIPT_FILE=avws.java
@@ -15,8 +16,9 @@ set -Eeuo pipefail
 #   JBANG_EXPORT_MODE=fatjar     # fatjar | portable | local
 #   DOCKERHUB_PASSWORD=...       # alternative to DOCKERHUB_TOKEN
 
-IMAGE_NAME="${1:?Usage: $0 <docker-image-name> <version>}"
-VERSION="${2:?Usage: $0 <docker-image-name> <version>}"
+IMAGE_NAME="${1:?Usage: $0 <docker-image-name> <version> [pdf4av-version]}"
+VERSION="${2:?Usage: $0 <docker-image-name> <version> [pdf4av-version]}"
+PDF4AV_VERSION="${3:-0.0.1-SNAPSHOT}"
 
 SCRIPT_FILE="${SCRIPT_FILE:-avws.java}"
 DOCKERFILE="${DOCKERFILE:-Dockerfile}"
@@ -56,6 +58,7 @@ echo "Exporting $SCRIPT_FILE via JBang Zero Install..."
 # fatjar passt zu einem Dockerfile, das genau ein JAR_FILE erwartet.
 curl -Ls https://sh.jbang.dev | bash -s - export "$JBANG_EXPORT_MODE" \
   --force \
+  --deps "ch.so.agi:pdf4av:${PDF4AV_VERSION}" \
   --output "$JAR_FILE" \
   "$SCRIPT_FILE"
 
