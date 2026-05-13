@@ -88,10 +88,8 @@ jbang dev/import-data.java schema --db=avws --user=postgres --password=secret
 ```
 
 ```
-jbang dev/import-data.java import dmav --db=avws --user=postgres --password=secret
+jbang dev/import-data.java import dmav,texte,metadaten,amt,zustaendige-stelle,information,logo-ch-pi,logo-ch,logo-ch-so,logo-ch-be,logo-ch-449 --db=avws --user=postgres --password=secret
 ```
-
-...
 
 ```
 nohup jbang dev/import-data.java import gebaddr --db=avws --user=postgres --password=secret > import-data.log 2>&1 &
@@ -104,6 +102,10 @@ Weil Index-Creation noch nicht in import-Script gewesen:
 
 ```
 psql -h 127.0.0.1 -p 54321 -U postgres -d avws
+```
+
+```
+drop schema stage cascade;
 ```
 
 ```

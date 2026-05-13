@@ -1,17 +1,44 @@
-localhost:80 {    
+(cors) {
+	@cors_preflight {
+		method OPTIONS
+		header Origin *
+		header Access-Control-Request-Method *
+	}
+	handle @cors_preflight {
+		header {
+			Access-Control-Allow-Origin *
+			Access-Control-Allow-Methods "GET,HEAD,OPTIONS"
+			Access-Control-Allow-Headers "Origin,Accept,Content-Type,Authorization,X-Requested-With,Cache-Control,Pragma"
+			Access-Control-Max-Age 86400
+			Vary "Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
+		}
+		respond "" 204
+	}
 
-    reverse_proxy av-web-service:8080
-
-    log stdout
+	@cors_request header Origin *
+	header @cors_request {
+		Access-Control-Allow-Origin *
+		Vary Origin
+	}
 }
 
-avws.sogeo.services {    
-    tls stefan.ziegler.de@gmail.com 
-    #tls stefan.ziegler.de@gmail.com {
-    #    ca https://acme-staging-v02.api.letsencrypt.org/directory
-    #}
+localhost:80 {
+	import cors
 
-    reverse_proxy av-web-service:8080
+	reverse_proxy av-web-service:8080
 
-    log stdout
+	log stdout
+}
+
+avws.sogeo.services {
+	tls stefan.ziegler.de@gmail.com
+	#tls stefan.ziegler.de@gmail.com {
+	#    ca https://acme-staging-v02.api.letsencrypt.org/directory
+	#}
+
+	import cors
+
+	reverse_proxy av-web-service:8080
+
+	log stdout
 }
