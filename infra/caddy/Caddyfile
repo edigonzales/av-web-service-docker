@@ -1,25 +1,20 @@
 (cors) {
-	@cors_preflight {
-		method OPTIONS
-		header Origin *
-		header Access-Control-Request-Method *
-	}
-	handle @cors_preflight {
-		header {
-			Access-Control-Allow-Origin *
-			Access-Control-Allow-Methods "GET,HEAD,OPTIONS"
-			Access-Control-Allow-Headers "Origin,Accept,Content-Type,Authorization,X-Requested-With,Cache-Control,Pragma"
-			Access-Control-Max-Age 86400
-			Vary "Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
-		}
-		respond "" 204
-	}
+    # Preflight-Requests (OPTIONS) - alle behandeln
+    @cors_preflight method OPTIONS
+    handle @cors_preflight {
+        header {
+            Access-Control-Allow-Origin "{http.request.header.Origin}"
+            Access-Control-Allow-Methods "GET,HEAD,OPTIONS"
+            Access-Control-Allow-Headers "Origin,Accept,Content-Type,Authorization,X-Requested-With,Cache-Control,Pragma"
+            Access-Control-Max-Age 86400
+            Vary "Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
+        }
+        respond "" 204
+    }
 
-	@cors_request header Origin *
-	header @cors_request {
-		Access-Control-Allow-Origin *
-		Vary Origin
-	}
+    # Normale Requests: tatsächlichen Origin zurückspiegeln
+    header Access-Control-Allow-Origin "{http.request.header.Origin}"
+    header Vary Origin
 }
 
 localhost:80 {
