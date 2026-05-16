@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: "/app/",  
   define: {
     'import.meta.env.VITE_MOCK_XML_BASE_PATH': JSON.stringify('/mock-data'),
   },
