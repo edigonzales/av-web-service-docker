@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21.0.10_7-jre-ubi9-minimal
 
 ARG UID=1001
-ARG JAR_FILE=tmp/application.jar
+ARG JAR_FILE=build/libs/avws.jar
 
 RUN microdnf update -y \
     && microdnf reinstall tzdata -y \

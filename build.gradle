@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '3.5.9'
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri('https://jars.interlis.guru/')
+    }
+    maven {
+        url = uri('https://jars.umleditor.org/')
+    }
+    maven {
+        url = uri('https://jars.interlis.ch/')
+    }
+    mavenLocal()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+dependencies {
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.5.9')
+    implementation('ch.ehi.avwebservice:av-web-service:1.0.0-SNAPSHOT') {
+        exclude group: 'ch.so.agi', module: 'pdf4av'
+    }
+
+    implementation 'ch.so.agi:pdf4av:0.0.1-SNAPSHOT'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+application {
+    mainClass = 'avws'
+    applicationDefaultJvmArgs = []
+}
+
+compileJava {
+    options.compilerArgs += ['-g', '-parameters']
+}
+
+tasks.named('bootJar') {
+    mainClass = 'avws'
+    archiveFileName = 'avws.jar'
+}
+
+tasks.named('jar') {
+    enabled = false
+}
+
+tasks.register('installFrontendDependencies', Exec) {
+    workingDir = file("${projectDir}/frontend")
+    commandLine 'npm', 'ci'
+}
+
+tasks.register('buildFrontend', Exec) {
+    dependsOn 'installFrontendDependencies'
+    workingDir = file("${projectDir}/frontend")
+    commandLine 'npm', 'run', 'build'
+}
+
+tasks.register('copyFrontend', Copy) {
+    dependsOn 'buildFrontend'
+
+    from "${projectDir}/frontend/dist"
+    into layout.buildDirectory.dir('resources/main/static/app')
+}
+
+tasks.named('processResources') {
+    dependsOn 'copyFrontend'
+}

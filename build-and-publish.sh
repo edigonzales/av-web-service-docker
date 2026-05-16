@@ -2,34 +2,29 @@
 set -Eeuo pipefail
 
 # Usage:
-#   DOCKERHUB_USERNAME=... DOCKERHUB_TOKEN=... ./build-and-publish.sh <docker-image-name> <version> [pdf4av-version]
+#   ./build-and-publish.sh <image-name> <version>
 #
 # Example:
-#   DOCKERHUB_USERNAME=myuser DOCKERHUB_TOKEN=*** ./build-and-publish.sh myuser/avws 1.0.0
-#   DOCKERHUB_USERNAME=myuser DOCKERHUB_TOKEN=*** ./build-and-publish.sh myuser/avws 1.0.0 0.0.2-SNAPSHOT
+#   ./build-and-publish.sh ghcr.io/my-org/avws 1.0.0
 #
 # Optional env vars:
-#   SCRIPT_FILE=avws.java
 #   DOCKERFILE=Dockerfile
 #   UID_ARG=1001
-#   JAR_FILE=tmp/application.jar
-#   JBANG_EXPORT_MODE=fatjar     # fatjar | portable | local
-#   PDF4AV_REPO_URL=https://jars.interlis.guru/snapshots
-#   DOCKERHUB_PASSWORD=...       # alternative to DOCKERHUB_TOKEN
+#   JAR_FILE=build/libs/avws.jar
+#   PUSH_LATEST=true|false (default: true)
+#   DOCKER_USERNAME=...
+#   DOCKER_PASSWORD=...
 
-IMAGE_NAME="${1:?Usage: $0 <docker-image-name> <version> [pdf4av-version]}"
-VERSION="${2:?Usage: $0 <docker-image-name> <version> [pdf4av-version]}"
-PDF4AV_VERSION="${3:-0.0.1-SNAPSHOT}"
-PDF4AV_REPO_URL="${PDF4AV_REPO_URL:-https://jars.interlis.guru/snapshots}"
+IMAGE_NAME="${1:?Usage: $0 <image-name> <version>}"
+VERSION="${2:?Usage: $0 <image-name> <version>}"
 
-SCRIPT_FILE="${SCRIPT_FILE:-avws.java}"
 DOCKERFILE="${DOCKERFILE:-Dockerfile}"
 UID_ARG="${UID_ARG:-1001}"
-JAR_FILE="${JAR_FILE:-tmp/application.jar}"
-JBANG_EXPORT_MODE="${JBANG_EXPORT_MODE:-fatjar}"
+JAR_FILE="${JAR_FILE:-build/libs/avws.jar}"
+PUSH_LATEST="${PUSH_LATEST:-true}"
 
-DOCKER_USER="${DOCKERHUB_USERNAME:-${DOCKER_USERNAME:-}}"
-DOCKER_PASS="${DOCKERHUB_TOKEN:-${DOCKERHUB_PASSWORD:-${DOCKER_PASSWORD:-}}}"
+DOCKER_USER="${DOCKER_USERNAME:-}"
+DOCKER_PASS="${DOCKER_PASSWORD:-}"
 
 die() {
   echo "ERROR: $*" >&2
@@ -41,7 +36,6 @@ require_cmd() {
 }
 
 echo "Checking prerequisites..."
-require_cmd curl
 require_cmd bash
 require_cmd docker
 require_cmd java
@@ -50,22 +44,12 @@ JAVA_VERSION_OUTPUT="$(java -version 2>&1 || true)"
 echo "$JAVA_VERSION_OUTPUT" | grep -Eq 'version "21|openjdk version "21' \
   || die "Java 21 not detected. java -version output was: $JAVA_VERSION_OUTPUT"
 
-[[ -f "$SCRIPT_FILE" ]] || die "Script file not found: $SCRIPT_FILE"
 [[ -f "$DOCKERFILE" ]] || die "Dockerfile not found: $DOCKERFILE"
 
-mkdir -p "$(dirname "$JAR_FILE")"
+echo "Running Gradle build (includes frontend)..."
+./gradlew clean build
 
-echo "Exporting $SCRIPT_FILE via JBang Zero Install..."
-# JBang ohne vorgängige Installation ausführen.
-# fatjar passt zu einem Dockerfile, das genau ein JAR_FILE erwartet.
-curl -Ls https://sh.jbang.dev | bash -s - export "$JBANG_EXPORT_MODE" \
-  --force \
-  --repos "$PDF4AV_REPO_URL" \
-  --deps "ch.so.agi:pdf4av:${PDF4AV_VERSION}" \
-  --output "$JAR_FILE" \
-  "$SCRIPT_FILE"
-
-[[ -f "$JAR_FILE" ]] || die "Expected exported jar not found: $JAR_FILE"
+[[ -f "$JAR_FILE" ]] || die "Expected jar not found: $JAR_FILE"
 
 echo "Building Docker image..."
 docker build \
@@ -75,21 +59,28 @@ docker build \
   --build-arg "JAR_FILE=$JAR_FILE" \
   --build-arg "UID=$UID_ARG" \
   -t "${IMAGE_NAME}:${VERSION}" \
-  -t "${IMAGE_NAME}:latest" \
   -f "$DOCKERFILE" \
   .
 
+if [[ "$PUSH_LATEST" == "true" ]]; then
+  docker tag "${IMAGE_NAME}:${VERSION}" "${IMAGE_NAME}:latest"
+fi
+
 if [[ -n "$DOCKER_USER" && -n "$DOCKER_PASS" ]]; then
-  echo "Logging in to Docker Hub..."
+  echo "Logging in to container registry..."
   printf '%s' "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
 else
-  echo "No Docker credentials env vars found; assuming docker login already exists."
+  echo "No DOCKER_USERNAME/DOCKER_PASSWORD provided; assuming existing docker login."
 fi
 
 echo "Pushing Docker image tags..."
 docker push "${IMAGE_NAME}:${VERSION}"
-docker push "${IMAGE_NAME}:latest"
+if [[ "$PUSH_LATEST" == "true" ]]; then
+  docker push "${IMAGE_NAME}:latest"
+fi
 
 echo "Done:"
 echo "  ${IMAGE_NAME}:${VERSION}"
-echo "  ${IMAGE_NAME}:latest"
+if [[ "$PUSH_LATEST" == "true" ]]; then
+  echo "  ${IMAGE_NAME}:latest"
+fi
