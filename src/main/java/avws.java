@@ -1,7 +1,7 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 21
 //REPOS central
-//REPOS guru=https://jars.interlis.guru/
+//REPOS guru=https://jars.interlis.guru/snapshots
 //REPOS umleditor=https://jars.umleditor.org/
 //REPOS interlis=https://jars.interlis.ch/
 //DEPS ch.ehi.avwebservice:av-web-service:1.0.0-SNAPSHOT
@@ -41,13 +41,14 @@ public class avws {
                 return "forward:/app/index.html";
             }
 
-            @GetMapping({
-                    "/app/{path:^(?!assets$)[^\\.]*$}",
-                    "/app/{path:^(?!assets$)[^\\.]*$}/**"
-            })
-            public String appRoute() {
-                return "forward:/app/index.html";
-            }
+@GetMapping({
+        "/app/{path:^(?!assets$|config$|favicon\\.ico$|vite\\.svg$)[^\\.]*$}",
+        "/app/{path:^(?!assets$|config$)[^\\.]*$}/**"
+})
+public String appRoute() {
+    return "forward:/app/index.html";
+}
+
         }
     }
 }
