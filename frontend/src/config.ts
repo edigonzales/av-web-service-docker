@@ -63,13 +63,17 @@ const DEFAULT_CONFIG: AppConfig = {
   },
 };
 
-export async function loadAppConfig(url = '/config/app.config.json'): Promise<AppConfig> {
+export async function loadAppConfig(
+  url = `${import.meta.env.BASE_URL}config/app.config.json`
+): Promise<AppConfig> {
   try {
     const response = await fetch(url);
+
     if (!response.ok) {
       console.warn(`Failed to load config from ${url}, using defaults.`);
       return { ...DEFAULT_CONFIG };
     }
+
     const parsed = await response.json();
     return { ...DEFAULT_CONFIG, ...parsed };
   } catch (err) {
