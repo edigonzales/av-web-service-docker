@@ -392,6 +392,33 @@ test.describe('Detailansicht', () => {
     await page.getByText('Zurück zur Grundstückssuche').click();
     await waitForMapReady(page);
   });
+
+  test('PDF-Auszug-Button oeffnet korrekte PDF-URL', async ({ page }) => {
+    await page.goto('/#/detail/CH994641443597');
+    await expect(page.getByRole('heading', { name: /926/ })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('PDF-Auszug')).toBeVisible();
+
+    const capturedUrl = await page.evaluate(() => {
+      return new Promise<string | undefined>((resolve) => {
+        const originalOpen = window.open;
+        window.open = function(url: string | URL | undefined, ..._args: unknown[]) {
+          window.open = originalOpen;
+          resolve(typeof url === 'string' ? url : undefined);
+          return null as unknown as Window;
+        };
+        const btn = document
+          .querySelector('gi-app')
+          ?.shadowRoot
+          ?.querySelector('gi-detail-view')
+          ?.shadowRoot
+          ?.querySelector('#pdfBtn') as HTMLButtonElement | null;
+        btn?.click();
+        setTimeout(() => { window.open = originalOpen; resolve(undefined); }, 2000);
+      });
+    });
+
+    expect(capturedUrl).toMatch(/.*\/extract\/pdf\/\?EGRID=CH994641443597&GEOMETRY=true&WITHIMAGES=true.*/);
+  });
 });
 
 test.describe('Fehlerzustaende', () => {

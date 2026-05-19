@@ -273,7 +273,8 @@ export class GiDetailView extends HTMLElement {
         .actions button { padding: 0.4rem 0.8rem; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
         .actions button:hover { background: #f5f5f5; }
         .actions .back-btn { padding: 0.4rem 0.8rem; background: white; border: 1px solid #c00; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: #c00; }
-        .actions .back-btn:hover { background: #f5f5f5; }
+        .actions .pdf-btn { padding: 0.4rem 0.8rem; background: white; border: 1px solid #c00; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: #c00; }
+        .actions .pdf-btn:hover { background: #f5f5f5; }
         .auth-btn { padding: 0.4rem 0.8rem; background: white; border: 1px solid #c00; border-radius: 4px; cursor: pointer; font-size: 0.85rem; color: #c00; }
         .auth-btn:hover { background: #f5f5f5; }
         .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1rem; }
@@ -301,6 +302,7 @@ export class GiDetailView extends HTMLElement {
         <div class="actions">
           <button id="expandBtn">Alles aufklappen</button>
           <button id="collapseBtn">Alles zuklappen</button>
+          <button class="pdf-btn" id="pdfBtn">PDF-Auszug</button>
           <button class="back-btn" id="backBtn">Zurück zur Grundstückssuche</button>
         </div>
       </div>
@@ -427,6 +429,13 @@ export class GiDetailView extends HTMLElement {
 
     // Actions
     this.shadowRoot.getElementById('authBtn')?.addEventListener('click', () => window.open(this._config.authUrl, '_blank'));
+    this.shadowRoot.getElementById('pdfBtn')?.addEventListener('click', () => {
+      const egrid = this._data?.property.egrid;
+      if (egrid) {
+        const url = `${this._config.serviceBaseUrl}/extract/pdf/?EGRID=${egrid}&GEOMETRY=true&WITHIMAGES=true&LANG=${this._config.language}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    });
     this.shadowRoot.getElementById('backBtn')?.addEventListener('click', () => this.goBack());
     this.shadowRoot.getElementById('expandBtn')?.addEventListener('click', () => this.expandAll());
     this.shadowRoot.getElementById('collapseBtn')?.addEventListener('click', () => this.collapseAll());
